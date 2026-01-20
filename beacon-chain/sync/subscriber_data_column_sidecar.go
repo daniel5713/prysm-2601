@@ -28,6 +28,8 @@ func (s *Service) dataColumnSubscriber(ctx context.Context, msg proto.Message) e
 		return wrapDataColumnError(sidecar, "receive data column sidecar", err)
 	}
 
+	var wg errgroup.Group
+	
 	wg.Go(func() error {
 		if err := s.processDataColumnSidecarsFromReconstruction(ctx, sidecar); err != nil {
 			return wrapDataColumnError(sidecar, "process data column sidecars from reconstruction", err)
@@ -54,7 +56,7 @@ func (s *Service) dataColumnSubscriber(ctx context.Context, msg proto.Message) e
 	//	return err
 	//}
 
-	return nil
+	return wg.Wait()
 }
 
 // receiveDataColumnSidecar receives a single data column sidecar: marks it as seen and saves it to the chain.
