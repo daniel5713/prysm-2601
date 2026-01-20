@@ -36,19 +36,19 @@ func (s *Service) dataColumnSubscriber(ctx context.Context, msg proto.Message) e
 		return nil
 	})
 
-	wg.Go(func() error {
-		if err := s.processDataColumnSidecarsFromExecution(ctx, peerdas.PopulateFromSidecar(sidecar)); err != nil {
-			if errors.Is(err, context.Canceled) {
+   //	wg.Go(func() error {
+	//  	if err := s.processDataColumnSidecarsFromExecution(ctx, peerdas.PopulateFromSidecar(sidecar)); err != nil {
+	//		if errors.Is(err, context.Canceled) {
 				// Do not log if the context was cancelled on purpose.
-				// (Still log other context errors such as deadlines exceeded).
+	//			// (Still log other context errors such as deadlines exceeded).
 				return nil
-			}
+	//		}
 
-			return wrapDataColumnError(sidecar, "process data column sidecars from execution", err)
-		}
+	//		return wrapDataColumnError(sidecar, "process data column sidecars from execution", err)
+	//	}
 
-		return nil
-	})
+	//	return nil
+	//})
 
 	if err := wg.Wait(); err != nil {
 		return err
