@@ -41,7 +41,7 @@ func (s *Service) dataColumnSubscriber(ctx context.Context, msg proto.Message) e
 	//		if errors.Is(err, context.Canceled) {
 				// Do not log if the context was cancelled on purpose.
 	//			// (Still log other context errors such as deadlines exceeded).
-				return nil
+	//			return nil
 	//		}
 
 	//		return wrapDataColumnError(sidecar, "process data column sidecars from execution", err)
