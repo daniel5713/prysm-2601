@@ -27,8 +27,6 @@ func (s *Service) dataColumnSubscriber(ctx context.Context, msg proto.Message) e
 	if err := s.receiveDataColumnSidecar(ctx, sidecar); err != nil {
 		return wrapDataColumnError(sidecar, "receive data column sidecar", err)
 	}
-
-	var wg errgroup.Group
 	
 	wg.Go(func() error {
 		if err := s.processDataColumnSidecarsFromReconstruction(ctx, sidecar); err != nil {
