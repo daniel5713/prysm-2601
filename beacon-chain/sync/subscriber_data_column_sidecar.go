@@ -50,9 +50,9 @@ func (s *Service) dataColumnSubscriber(ctx context.Context, msg proto.Message) e
 	//	return nil
 	//})
 
-	if err := wg.Wait(); err != nil {
-		return err
-	}
+	//if err := wg.Wait(); err != nil {
+	//	return err
+	//}
 
 	return nil
 }
