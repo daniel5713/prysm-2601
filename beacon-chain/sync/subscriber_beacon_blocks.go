@@ -18,7 +18,7 @@ import (
 	"github.com/OffchainLabs/prysm/v7/consensus-types/interfaces"
 	"github.com/OffchainLabs/prysm/v7/consensus-types/primitives"
 	"github.com/OffchainLabs/prysm/v7/io/file"
-	"github.com/OffchainLabs/prysm/v7/runtime/version"
+	//"github.com/OffchainLabs/prysm/v7/runtime/version"
 	"github.com/OffchainLabs/prysm/v7/time/slots"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -48,14 +48,14 @@ func (s *Service) beaconBlockSubscriber(ctx context.Context, msg proto.Message) 
 		return errors.Wrap(err, "new ro block with root")
 	}
 
-	go func() {
-		if err := s.processSidecarsFromExecutionFromBlock(ctx, roBlock); err != nil {
-			log.WithError(err).WithFields(logrus.Fields{
-				"root": fmt.Sprintf("%#x", root),
-				"slot": block.Slot(),
-			}).Error("Failed to process sidecars from execution from block")
-		}
-	}()
+	//go func() {
+	//	if err := s.processSidecarsFromExecutionFromBlock(ctx, roBlock); err != nil {
+	//		log.WithError(err).WithFields(logrus.Fields{
+	//			"root": fmt.Sprintf("%#x", root),
+	//			"slot": block.Slot(),
+	//		}).Error("Failed to process sidecars from execution from block")
+	//	}
+	//}()
 
 	if err := s.cfg.chain.ReceiveBlock(ctx, signed, root, nil); err != nil {
 		if blockchain.IsInvalidBlock(err) {
