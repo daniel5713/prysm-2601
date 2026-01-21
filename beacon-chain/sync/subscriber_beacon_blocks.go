@@ -181,6 +181,7 @@ func (s *Service) processBlobSidecarsFromExecution(ctx context.Context, block in
 // processDataColumnSidecarsFromExecution retrieves (if available) data column sidecars data from the execution client,
 // builds corresponding sidecars, save them to the storage, and broadcasts them over P2P if necessary.
 func (s *Service) processDataColumnSidecarsFromExecution(ctx context.Context, source peerdas.ConstructionPopulator) error {
+	return nil
 	key := fmt.Sprintf("%#x", source.Root())
 	if _, err, _ := s.columnSidecarsExecSingleFlight.Do(key, func() (any, error) {
 		const delay = 250 * time.Millisecond
