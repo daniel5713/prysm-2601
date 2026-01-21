@@ -183,98 +183,98 @@ func (s *Service) processBlobSidecarsFromExecution(ctx context.Context, block in
 func (s *Service) processDataColumnSidecarsFromExecution(ctx context.Context, source peerdas.ConstructionPopulator) error {
 	return nil
 //	key := fmt.Sprintf("%#x", source.Root())
-	if _, err, _ := s.columnSidecarsExecSingleFlight.Do(key, func() (any, error) {
-		const delay = 250 * time.Millisecond
+//	if _, err, _ := s.columnSidecarsExecSingleFlight.Do(key, func() (any, error) {
+//		const delay = 250 * time.Millisecond
 
-		commitments, err := source.Commitments()
-		if err != nil {
-			return nil, errors.Wrap(err, "blob kzg commitments")
-		}
+//		commitments, err := source.Commitments()
+//		if err != nil {
+//			return nil, errors.Wrap(err, "blob kzg commitments")
+//		}
 
 		// Exit early if there are no commitments.
-		if len(commitments) == 0 {
-			return nil, nil
-		}
+//		if len(commitments) == 0 {
+//			return nil, nil
+//		}
 
 		// Retrieve the indices of sidecars we should sample.
-		columnIndicesToSample, err := s.columnIndicesToSample()
-		if err != nil {
-			return nil, errors.Wrap(err, "column indices to sample")
-		}
+//		columnIndicesToSample, err := s.columnIndicesToSample()
+//		if err != nil {
+//			return nil, errors.Wrap(err, "column indices to sample")
+//		}
 
-		log := log.WithFields(logrus.Fields{
-			"root":          fmt.Sprintf("%#x", source.Root()),
-			"slot":          source.Slot(),
-			"proposerIndex": source.ProposerIndex(),
-			"type":          source.Type(),
-		})
+//		log := log.WithFields(logrus.Fields{
+//			"root":          fmt.Sprintf("%#x", source.Root()),
+//			"slot":          source.Slot(),
+//			"proposerIndex": source.ProposerIndex(),
+//			"type":          source.Type(),
+//		})
 
-		var constructedSidecarCount uint64
-		for iteration := uint64(0); ; /*no stop condition*/ iteration++ {
-			log = log.WithField("iteration", iteration)
+//		var constructedSidecarCount uint64
+//		for iteration := uint64(0); ; /*no stop condition*/ iteration++ {
+//			log = log.WithField("iteration", iteration)
 
 			// Exit early if all sidecars to sample have been seen.
-			if s.haveAllSidecarsBeenSeen(source.Slot(), source.ProposerIndex(), columnIndicesToSample) {
-				if iteration > 0 && constructedSidecarCount == 0 {
-					log.Debug("No data column sidecars constructed from the execution client")
-				}
+//			if s.haveAllSidecarsBeenSeen(source.Slot(), source.ProposerIndex(), columnIndicesToSample) {
+//				if iteration > 0 && constructedSidecarCount == 0 {
+//					log.Debug("No data column sidecars constructed from the execution client")
+//				}
 
-				return nil, nil
-			}
+//				return nil, nil
+//			}
 
 			// Return if the context is done.
-			if ctx.Err() != nil {
-				return nil, ctx.Err()
-			}
+//			if ctx.Err() != nil {
+//				return nil, ctx.Err()
+//			}
 
-			if iteration == 0 {
-				dataColumnsRecoveredFromELAttempts.Inc()
-			}
+//			if iteration == 0 {
+//				dataColumnsRecoveredFromELAttempts.Inc()
+//			}
 
 			// Try to reconstruct data column constructedSidecars from the execution client.
-			constructedSidecars, err := s.cfg.executionReconstructor.ConstructDataColumnSidecars(ctx, source)
-			if err != nil {
-				return nil, errors.Wrap(err, "reconstruct data column sidecars")
-			}
+//			constructedSidecars, err := s.cfg.executionReconstructor.ConstructDataColumnSidecars(ctx, source)
+//			if err != nil {
+//				return nil, errors.Wrap(err, "reconstruct data column sidecars")
+//			}
 
 			// No sidecars are retrieved from the EL, retry later
-			constructedCount := uint64(len(constructedSidecars))
+//			constructedCount := uint64(len(constructedSidecars))
 
 			// Boundary check.
-			if constructedSidecarCount > 0 && constructedSidecarCount != fieldparams.NumberOfColumns {
-				return nil, errors.Errorf("reconstruct data column sidecars returned %d sidecars, expected %d - should never happen", constructedSidecarCount, fieldparams.NumberOfColumns)
-			}
+//			if constructedSidecarCount > 0 && constructedSidecarCount != fieldparams.NumberOfColumns {
+//				return nil, errors.Errorf("reconstruct data column sidecars returned %d sidecars, expected %d - should never happen", constructedSidecarCount, fieldparams.NumberOfColumns)
+//			}
 
-			unseenIndices, err := s.broadcastAndReceiveUnseenDataColumnSidecars(ctx, source.Slot(), source.ProposerIndex(), columnIndicesToSample, constructedSidecars)
-			if err != nil {
-				return nil, errors.Wrap(err, "broadcast and receive unseen data column sidecars")
-			}
+//			unseenIndices, err := s.broadcastAndReceiveUnseenDataColumnSidecars(ctx, source.Slot(), source.ProposerIndex(), columnIndicesToSample, constructedSidecars)
+//			if err != nil {
+//				return nil, errors.Wrap(err, "broadcast and receive unseen data column sidecars")
+//			}
 
-			if constructedCount > 0 {
-				dataColumnsRecoveredFromELTotal.Inc()
+//			if constructedCount > 0 {
+//				dataColumnsRecoveredFromELTotal.Inc()
 
-				log.WithFields(logrus.Fields{
-					"root":          fmt.Sprintf("%#x", source.Root()),
-					"slot":          source.Slot(),
-					"proposerIndex": source.ProposerIndex(),
-					"iteration":     iteration,
-					"type":          source.Type(),
-					"count":         len(unseenIndices),
-					"indices":       helpers.SortedPrettySliceFromMap(unseenIndices),
-				}).Debug("Constructed data column sidecars from the execution client")
+//				log.WithFields(logrus.Fields{
+//					"root":          fmt.Sprintf("%#x", source.Root()),
+//					"slot":          source.Slot(),
+//					"proposerIndex": source.ProposerIndex(),
+//					"iteration":     iteration,
+//					"type":          source.Type(),
+//					"count":         len(unseenIndices),
+//					"indices":       helpers.SortedPrettySliceFromMap(unseenIndices),
+//				}).Debug("Constructed data column sidecars from the execution client")
 
-				return nil, nil
-			}
+//				return nil, nil
+//			}
 
 			// Wait before retrying.
-			time.Sleep(delay)
-		}
-	}); err != nil {
-		return err
-	}
+//			time.Sleep(delay)
+//		}
+//	}); err != nil {
+//		return err
+//	}
 
-	return nil
-}
+//	return nil
+//}
 
 // broadcastAndReceiveUnseenDataColumnSidecars broadcasts and receives unseen data column sidecars.
 func (s *Service) broadcastAndReceiveUnseenDataColumnSidecars(
