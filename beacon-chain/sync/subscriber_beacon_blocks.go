@@ -43,7 +43,7 @@ func (s *Service) beaconBlockSubscriber(ctx context.Context, msg proto.Message) 
 		return err
 	}
 
-	roBlock, err := blocks.NewROBlockWithRoot(signed, root)
+	//roBlock, err := blocks.NewROBlockWithRoot(signed, root)
 	if err != nil {
 		return errors.Wrap(err, "new ro block with root")
 	}
