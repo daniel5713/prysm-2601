@@ -44,9 +44,9 @@ func (s *Service) beaconBlockSubscriber(ctx context.Context, msg proto.Message) 
 	}
 
 	//roBlock, err := blocks.NewROBlockWithRoot(signed, root)
-	if err != nil {
-		return errors.Wrap(err, "new ro block with root")
-	}
+	//if err != nil {
+	//	return errors.Wrap(err, "new ro block with root")
+	//}
 
 	//go func() {
 	//	if err := s.processSidecarsFromExecutionFromBlock(ctx, roBlock); err != nil {
@@ -182,7 +182,7 @@ func (s *Service) processBlobSidecarsFromExecution(ctx context.Context, block in
 // builds corresponding sidecars, save them to the storage, and broadcasts them over P2P if necessary.
 func (s *Service) processDataColumnSidecarsFromExecution(ctx context.Context, source peerdas.ConstructionPopulator) error {
 	return nil
-	key := fmt.Sprintf("%#x", source.Root())
+//	key := fmt.Sprintf("%#x", source.Root())
 	if _, err, _ := s.columnSidecarsExecSingleFlight.Do(key, func() (any, error) {
 		const delay = 250 * time.Millisecond
 
